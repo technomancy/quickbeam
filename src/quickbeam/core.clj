@@ -6,18 +6,18 @@
            (org.eclipse.jgit.revwalk RevWalk)))
 
 (defn find-repo [path]
-  (->> (.getAbsoluteFile (jio/file path))
-       (iterate #(.getParentFile %))
-       (take-while identity)
-       (map #(file % ".git"))
-       (filter #(.exists %))
-       first
-       FileRepository.))
+  (when-let [git-dir (->> (.getAbsoluteFile (jio/file path))
+                          (iterate #(.getParentFile %))
+                          (take-while identity)
+                          (map #(file % ".git"))
+                          (filter #(.exists %))
+                          first)]
+    (FileRepository. git-dir)))
 
 (defn history [repo-path]
-  (let [repo (find-repo repo-path)
-        walk (RevWalk. repo)
-        id (.resolve repo "HEAD")
-        commit (.parseCommit walk id)]
-    (.markStart walk commit)
-    (iterator-seq (.iterator walk))))
+  (if-let [repo (find-repo repo-path)]
+    (let [walk (RevWalk. repo)
+          id (.resolve repo "HEAD")
+          commit (.parseCommit walk id)]
+      (.markStart walk commit)
+      (iterator-seq (.iterator walk)))))
