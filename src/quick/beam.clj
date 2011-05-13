@@ -1,4 +1,4 @@
-(ns quickbeam.core
+(ns quick.beam
   (:require [clojure.java.io :as io])
   (:import (java.util Date)
            (org.eclipse.jgit.revwalk RevWalk)

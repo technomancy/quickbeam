@@ -1,5 +1,5 @@
-(ns quickbeam.test.core
-  (:use [quickbeam.core])
+(ns quick.test.beam
+  (:use [quick.beam])
   (:use [clojure.test]))
 
 (deftest test-history
