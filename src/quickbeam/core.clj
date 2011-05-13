@@ -14,10 +14,17 @@
                           first)]
     (FileRepository. git-dir)))
 
+(defn commit-map [commit]
+  (let [{:keys [authorIdent fullMessage name commitTime]} (bean commit)]
+    {:author (.toExternalString authorIdent)
+     :message fullMessage
+     :sha name
+     :date (java.util.Date. (long (* 1000 commitTime)))}))
+
 (defn history [repo-path]
   (if-let [repo (find-repo repo-path)]
     (let [walk (RevWalk. repo)
           id (.resolve repo "HEAD")
           commit (.parseCommit walk id)]
       (.markStart walk commit)
-      (iterator-seq (.iterator walk)))))
+      (map commit-map (iterator-seq (.iterator walk))))))
