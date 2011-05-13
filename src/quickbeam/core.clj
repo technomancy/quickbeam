@@ -21,10 +21,12 @@
      :sha name
      :date (java.util.Date. (long (* 1000 commitTime)))}))
 
-(defn history [repo-path]
-  (if-let [repo (find-repo repo-path)]
-    (let [walk (RevWalk. repo)
-          id (.resolve repo "HEAD")
-          commit (.parseCommit walk id)]
-      (.markStart walk commit)
-      (map commit-map (iterator-seq (.iterator walk))))))
+(defn history
+  ([repo-path]
+     (if-let [repo (find-repo repo-path)]
+       (let [walk (RevWalk. repo)
+             id (.resolve repo "HEAD")
+             commit (.parseCommit walk id)]
+         (.markStart walk commit)
+         (map commit-map (iterator-seq (.iterator walk))))))
+  ([] (history "")))
