@@ -3,4 +3,4 @@
   (:use [clojure.test]))
 
 (deftest test-history
-  (is (seq (history "."))))
+  (is (seq (history ""))))
