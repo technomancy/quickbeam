@@ -4,8 +4,15 @@
            (org.eclipse.jgit.revwalk RevWalk)
            (org.eclipse.jgit.storage.file FileRepository)))
 
+(defn absolutize [path]
+  (-> (if (.startsWith path "~")
+        (apply str (System/getProperty "user.home") (rest path))
+        path)
+      (io/file)
+      .getAbsolutePath))
+
 (defn find-repo [path]
-  (when-let [git-dir (->> (.getAbsoluteFile (io/file path))
+  (when-let [git-dir (->> (absolutize path)
                           (iterate #(.getParentFile %))
                           (take-while identity)
                           (map #(io/file % ".git"))
