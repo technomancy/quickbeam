@@ -1,15 +1,14 @@
 (ns quickbeam.core
-  (:require [clojure.java.io :as jio])
-  (:import (org.eclipse.jgit.lib Repository)
-           (org.eclipse.jgit.storage.file FileRepository)
-           (org.eclipse.jgit.lib ObjectId)
-           (org.eclipse.jgit.revwalk RevWalk)))
+  (:require [clojure.java.io :as io])
+  (:import (java.util Date)
+           (org.eclipse.jgit.revwalk RevWalk)
+           (org.eclipse.jgit.storage.file FileRepository)))
 
 (defn find-repo [path]
-  (when-let [git-dir (->> (.getAbsoluteFile (jio/file path))
+  (when-let [git-dir (->> (.getAbsoluteFile (io/file path))
                           (iterate #(.getParentFile %))
                           (take-while identity)
-                          (map #(file % ".git"))
+                          (map #(io/file % ".git"))
                           (filter #(.exists %))
                           first)]
     (FileRepository. git-dir)))
@@ -19,7 +18,7 @@
     {:author (.toExternalString authorIdent)
      :message fullMessage
      :sha name
-     :date (java.util.Date. (long (* 1000 commitTime)))}))
+     :date (Date. (long (* 1000 commitTime)))}))
 
 (defn history
   ([repo-path]
